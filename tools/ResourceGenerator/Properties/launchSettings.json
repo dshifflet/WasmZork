@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ResourceGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\src\\git\\WasmZork\\tools\\ZorkConsole\\zork1.dat\" \"D:\\src\\git\\WasmZork\\tools\\ZorkConsole\\zork1.cs\""
+    }
+  }
+}

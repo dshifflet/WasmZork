@@ -308,7 +308,7 @@ namespace zmachine
         public class op_print_addr : OpcodeHandler_1OP
         {
             public override String name() { return "op_print_addr"; }
-            public override void run(Machine machine,ushort v1) { Console.WriteLine(machine.memory.getZSCII(v1, 0).str); }
+            public override void run(Machine machine,ushort v1) { _io.WriteLine(machine.memory.getZSCII(v1, 0).str); }
         }
         public class op_remove_obj : OpcodeHandler_1OP
         {
@@ -318,7 +318,7 @@ namespace zmachine
         public class op_print_obj : OpcodeHandler_1OP
         {
             public override String name() { return "op_print_obj"; }
-            public override void run(Machine machine,ushort v1) { Console.Write(machine.objectTable.objectName(v1)); }
+            public override void run(Machine machine,ushort v1) { _io.Write(machine.objectTable.objectName(v1)); }
         }
         public class op_ret : OpcodeHandler_1OP
         {
@@ -337,7 +337,7 @@ namespace zmachine
         public class op_print_paddr : OpcodeHandler_1OP
         {
             public override String name() { return "op_print_paddr"; }
-            public override void run(Machine machine, ushort v1) { Console.Write(machine.memory.getZSCII((uint)v1 * 2, 0).str); }
+            public override void run(Machine machine, ushort v1) { _io.Write(machine.memory.getZSCII((uint)v1 * 2, 0).str); }
         }
         public class op_load : OpcodeHandler_1OP
         {
@@ -363,7 +363,7 @@ namespace zmachine
             {
 //                Debug.WriteLine("Getting string at " + machine.pc);
                 Memory.StringAndReadLength str = machine.memory.getZSCII(machine.pc, 0);
-                Console.Write(str.str); 
+                _io.Write(str.str); 
                 machine.pc += (uint)str.bytesRead;
 //                Debug.WriteLine("New pc location: " + machine.pc);
 
@@ -375,7 +375,7 @@ namespace zmachine
             public override void run(Machine machine) 
             { 
                 Memory.StringAndReadLength str = machine.memory.getZSCII(machine.pc, 0);
-                Console.Write(str.str);
+                _io.Write(str.str);
                 machine.pc += (uint)str.bytesRead;
                 machine.popRoutineData(1);
             }
@@ -421,7 +421,7 @@ namespace zmachine
         public class op_new_line : OpcodeHandler_0OP
         {
             public override String name() { return "op_new_line"; }
-            public override void run(Machine machine) { Console.Write("\n"); }
+            public override void run(Machine machine) { _io.Write("\n"); }
         }
         public class op_show_status : OpcodeHandler_0OP
         {
@@ -479,14 +479,14 @@ namespace zmachine
         public class op_print_char : OpcodeHandler_OPVAR
         {
             public override String name() { return "op_print_char"; }
-            public override void run(Machine machine, List<ushort> operands) { Console.Write(machine.memory.getZChar(operands[0])); }
+            public override void run(Machine machine, List<ushort> operands) { _io.Write(machine.memory.getZChar(operands[0]).ToString()); }
         }
         public class op_print_num : OpcodeHandler_OPVAR
         {
             public override String name() { return "op_print_num"; }
             public override void run(Machine machine,List<ushort> operands) 
             {
-                Console.Write((short)operands[0]); 
+                _io.Write(((short)operands[0]).ToString()); 
             }
         }
         public class op_random : OpcodeHandler_OPVAR

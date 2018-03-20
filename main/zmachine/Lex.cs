@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace zmachine
 {
-
+        
         public class Lex
         {
             Memory memory;
@@ -15,25 +15,34 @@ namespace zmachine
             List<ushort> separators = new List<ushort>();
             List<String> dictionary = new List<String>();
             List<uint> dictionaryIndex = new List<uint>();
-            int[] wordStartIndex;  
-            IO io = new IO();        
+            int[] wordStartIndex;
+            private IZmachineInputOutput _io;
 
             uint mp = 0;                                 // Memory Pointer
 
-            public Lex(Memory mem)
+            public Lex(Memory mem, IZmachineInputOutput io)
             {
                 memory = mem;
                 dictionaryAddress = memory.getWord(Memory.ADDR_DICT);
-                //IO io = new IO();
+                _io = io;
             }
 
-            public void read(int textBufferAddress, uint parseBufferAddress)
+            public void read(int textBufferAddress, uint parseBufferAddress, string s = null)
             {
                 int maxInputLength = memory.getByte((uint)textBufferAddress) - 1;    // byte 0 of the text-buffer should initially contain the maximum number of letters which can be typed, minus 1
                 int parseBufferLength = memory.getByte((uint)parseBufferAddress);
                 mp = parseBufferAddress + 2;
-                String input = io.ReadLine();                                   // Get initial input from io terminal
-
+                String input;
+                if (s == null)
+                {
+                    input = _io.ReadLine();                                   // Get initial input from io terminal    
+                }
+                else
+                {
+                    input = s;
+                }
+                
+                if (input == null) return;
                 if (input.Length > maxInputLength)
                     input = input.Remove(maxInputLength);                            // Limit input to size of text-buffer
                 input.TrimEnd('\n');                                                 // Remove carriage return from end of string  
@@ -203,14 +212,6 @@ namespace zmachine
 
     ////          tokenize(input)                                 // Tokenize input using the main dictionary
     //            setVar(firstoperand, zstringArray[i]);                                    // Store string in buffer in first operand 
-
-
-
-            public char readChar()
-            {
-                memory.getZChar(Convert.ToChar(io.ReadKey()));// read keypress and pass as a char into getZchar
-                return '0';
-            }
 
         }
 }

@@ -7,7 +7,7 @@ namespace ZorkConsole
     {
         static void Main(string[] args)
         {
-            Machine machine = new Machine("ZORK1.DAT");
+            var machine = new Machine(Zork1.GetData(), new ConsoleInputOutput());
 
             int numInstructionsProcessed = 0;
             while (!machine.isFinished())

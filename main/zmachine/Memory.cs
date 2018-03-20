@@ -7,12 +7,13 @@ namespace zmachine
     public class Memory
     {
         byte[] memory;
-        IO io = new IO();
+        IZmachineInputOutput _io;
 
-        public Memory (int size)
+        public Memory (int size, IZmachineInputOutput io)
         {
             // Class constructor
-           memory = new byte[size];    
+           memory = new byte[size];
+            _io = io;
         }
  
         //input byte array [] from file, output size specified byte array []
@@ -21,10 +22,14 @@ namespace zmachine
             //Load data into temp variable, copy into specified byte array
 
             byte[] src = File.ReadAllBytes(filename);
+            load(src);
+        }
 
+        public void load(byte[] src)
+        {
             if (src.Length <= memory.Length)
             {
-            
+
                 int i = 0;
                 foreach (byte b in src)
                 {
@@ -33,7 +38,6 @@ namespace zmachine
                     i++;
                 }
             }
-     
         }
         //assign given byte value @ hex address location
         public void setByte(uint address, byte val)
@@ -194,8 +198,8 @@ namespace zmachine
                                     output += getZChar(zchar10);
                                     if (debug == true)
                                     {
-                                        debugOutput += getZChar(zchar10); z++;
-                                        io.WriteLine("\n" + debugOutput + "(" + z + ")");
+                                        //debugOutput += getZChar(zchar10); z++;
+                                        //io.WriteLine("\n" + debugOutput + "(" + z + ")");
                                     }
                                     break;
                                 }

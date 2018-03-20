@@ -9,7 +9,7 @@ namespace zmachine
 {
     class ObjectTable
     {
-        Memory memory = new Memory(1024 * 128);
+        private Memory memory;
         public int tp = 0;                                 // pointer to move through tables
         public int objectId = 0;                           // Object ID
 
@@ -17,7 +17,7 @@ namespace zmachine
 
         public ObjectTable (Memory mem)
         {
-            memory = mem;
+            memory = mem;            
         }
 
         public int getDefaultProperty(int property)     // Start reading from the Program Defaults Table (before list of objects)

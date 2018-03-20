@@ -10,10 +10,11 @@ namespace zmachine
     public partial class Machine { 
     
         // This class moves through the input file and extracts bytes to deconstruct instructions in the code
-        Memory memory = new Memory(1024 * 128);         // Initialize memory
-        Memory stack = new Memory(1024 * 32);           // Stack of size 32768 (can be larger, but this should be fine)
+        Memory memory;         // Initialize memory
+        Memory stack;           // Stack of size 32768 (can be larger, but this should be fine)
         ObjectTable objectTable;
         Lex lex;
+        private static IZmachineInputOutput _io;
 
         public bool debug = false;
 
@@ -111,16 +112,35 @@ namespace zmachine
 
 
         // Class constructor : Loads in data from file and sets Program Counter
-        public Machine(string filename)
+        public Machine(string filename, IZmachineInputOutput io)
         {
-            memory.load(filename);
-            setProgramCounter();
+            InitMemory(io);
+            memory.load(filename);            
+            InitMachine(io);
+        }
 
-            for (int i =0  ; i < 128 ; ++i)
+        public Machine(byte[] bytes, IZmachineInputOutput io)
+        {
+            InitMemory(io);
+            memory.load(bytes);
+            InitMachine(io);
+        }
+
+        private void InitMemory(IZmachineInputOutput io)
+        {
+            _io = io;
+            memory = new Memory(1024 * 128, io);         // Initialize memory
+            stack = new Memory(1024 * 32, io);           // Stack of size 32768 (can be larger, but this should be fine)            
+        }
+
+        private void InitMachine(IZmachineInputOutput io)
+        {
+            setProgramCounter();
+            for (int i = 0; i < 128; ++i)
                 callStack[i] = new RoutineCallState();
 
             objectTable = new ObjectTable(memory);
-            lex = new Lex(memory);
+            lex = new Lex(memory, io);
         }
 
         // Find the PC start point in the header file and set PC 
@@ -221,6 +241,12 @@ namespace zmachine
             //return (byte) instruction;                 
 	            }
         }// end processInstruction
+
+        public void processText(string s)
+        {
+            //TODO these shouldn't be hard coded
+            lex.read(9793, 9553, s);            
+        }
 
         public byte pc_getByte()
         {
