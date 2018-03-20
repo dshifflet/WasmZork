@@ -122,8 +122,8 @@ namespace zmachine
         public Machine(byte[] bytes, IZmachineInputOutput io)
         {
             InitMemory(io);
-            memory.load(bytes);
-            InitMachine(io);
+            memory.load(bytes);            
+            InitMachine(io);           
         }
 
         private void InitMemory(IZmachineInputOutput io)

@@ -9,4 +9,9 @@
     <PackageReference Include="Ooui.Wasm" Version="0.8.186" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\main\zmachine\zmachine.csproj" />
+    <ProjectReference Include="..\..\main\Zork\Zork.csproj" />
+  </ItemGroup>
+
 </Project>
