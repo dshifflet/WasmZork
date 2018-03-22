@@ -32,7 +32,7 @@ namespace OouiConsole
             frm.Submit += (sender, eventArgs) =>
             {
                 DisplayOutput(ProcessCommand(machine, io, textInput.Value));
-                //textInput.Value = ""; <== DOESN'T WORK RIGHT
+                textInput.Value = ""; //DOESN'T WORK RIGHT
                 //value doesn't change so...
                 var js = string.Format("document.getElementById(\"{0}\").value = \"\";window.scrollTo(0,document.body.scrollHeight);", textInput.Id);
                 Runtime.InvokeJS(js);
@@ -65,6 +65,10 @@ namespace OouiConsole
 
         private static string WaitForOutput(Machine machine, SimpleInputOutput io)
         {
+            if (machine.isFinished())
+            {
+                return "Game crashed.  Refresh to start over, and don't do that again.";
+            }
             while (!io.WaitingForInput && !machine.isFinished())
             {
                 machine.processInstruction();
