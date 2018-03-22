@@ -10,10 +10,4 @@
     <ProjectReference Include="..\..\main\Zork\Zork.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="ZORK1.DAT">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
