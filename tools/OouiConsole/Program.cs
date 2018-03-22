@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Xml;
 using Ooui;
+using WebAssembly;
 using zmachine;
 using ZorkConsole;
 
@@ -14,61 +14,50 @@ namespace OouiConsole
          * Load the index.html in a web browser.  It compiles down to a WASM.
          */
         private static Span _area;
-
-        private static string _lastText;
-        static void Main(string[] args)
+        
+        static void Main()
         {
             //Start Game
             var io = new SimpleInputOutput();
             var machine = new Machine(Zork1.GetData(), io);
 
             _area = new Span();
-            //_area = new TextArea("TEXT AREA HERE");
-            //_area.Rows = 2;
-            //_area.Columns = 8;
 
             var frm = new Form();
 
-            var inputText = new TextInput();
-            inputText.Value = "";
+            var textInput = new TextInput();
+
             _area.Text = "";
+
             frm.Submit += (sender, eventArgs) =>
             {
-                //_area.Text += string.Format("{0}\r\n", inputText.Value);
-                ProcessCommand(machine, io, inputText.Value);
-                inputText.Value = "";
-                inputText.Name = "";
+                DisplayOutput(ProcessCommand(machine, io, textInput.Value));
+                //textInput.Value = ""; <== DOESN'T WORK RIGHT
+                //value doesn't change so...
+                var js = string.Format("document.getElementById(\"{0}\").value = \"\";window.scrollTo(0,document.body.scrollHeight);", textInput.Id);
+                Runtime.InvokeJS(js);
             };
-
-            inputText.KeyPress += (sender, eventArgs) =>
-            {                
-            };
-
             var container = new Paragraph();
             var p1 = new Paragraph();
             var p2 = new Paragraph();
-            var p3 = new Paragraph();
 
             p1.AppendChild(_area);
-            frm.AppendChild(inputText);
-            p3.AppendChild(frm);
+            frm.AppendChild(textInput);
+            p2.AppendChild(frm);
 
             container.AppendChild(p1);
-            container.AppendChild(p3);
             container.AppendChild(p2);
+                     
             // Publish a root element to be displayed
             UI.Publish("/", container);
-
-            WaitForOutput(machine, io);
+            DisplayOutput(WaitForOutput(machine, io));
         }
 
         private static string ProcessCommand(Machine machine, SimpleInputOutput io, string text)
         {
             io.Output = "";
             io.WaitingForInput = false;
-            //_area.Text += string.Format(">{0}", text.Replace("\r\n", "<br/>"));
-            var p = new Paragraph();
-            p.Text = string.Format(">{0}", text.Replace("\r\n", "<br/>"));
+            var p = new Paragraph {Text = string.Format(">{0}", text.Replace("\r\n", "<br/>"))};
             _area.AppendChild(p);
             machine.processText(text);
             return WaitForOutput(machine, io);
@@ -80,15 +69,18 @@ namespace OouiConsole
             {
                 machine.processInstruction();
             }
+            return io.Output;
+        }
 
-            string[] stringSeparators = new string[] { Environment.NewLine };
-            string[] lines = io.Output.Substring(0, io.Output.Length - 1).Split(stringSeparators, StringSplitOptions.None);
+        private static void DisplayOutput(string s)
+        {
+            var stringSeparators = new[] { Environment.NewLine };
+            var lines = s.Substring(0, s.Length - 1).Split(stringSeparators, StringSplitOptions.None);
             foreach (var line in lines)
             {
                 var p = new Paragraph(line);
                 _area.AppendChild(p);
             }
-            return io.Output;
         }
     }
 }
